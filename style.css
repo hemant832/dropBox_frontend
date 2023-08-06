@@ -1,0 +1,105 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#uploadContainer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#fileInput {
+    display: none;
+}
+
+.custom-file-upload {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.custom-file-upload:hover {
+    background-color: #0056b3;
+}
+
+#fileList {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+}
+
+.file-name {
+    cursor: pointer;
+    flex: 1;
+}
+
+.download-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 10px; /* Adjust this value as needed */
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.user-list-item {
+    cursor: pointer;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.user-list-item.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+select {
+    font-size: 20px; /* Make the font size bigger */
+    padding: 10px; /* Add some padding to make it visually larger */
+    border: 2px solid #333; /* Add a border to the select */
+    border-radius: 8px; /* Add some border radius for rounded corners */
+    outline: none; /* Remove the default focus outline */
+    background-color: #fff; /* Set a background color */
+    color: #333; /* Set the text color */
+    cursor: pointer; /* Change cursor on hover */
+    /* Optional: Add transitions for smooth effects */
+    margin-left: 45%;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Style the select when hovered */
+select:hover {
+    border-color: #555;
+}
+
+/* Style the select when focused */

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini Dropbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #uploadContainer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .custom-file-upload {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #0056b3;
+        }
+
+        #fileList {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+            padding: 5px;
+        }
+
+        .file-name {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .download-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 10px; /* Adjust this value as needed */
+        }
+
+        .download-button:hover {
+            background-color: #0056b3;
+        }
+        .user-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .user-list-item {
+            cursor: pointer;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .user-list-item.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mini Dropbox</h1>
+    <div class="user-list" id="userList">
+        <!-- Sample user list items (replace with actual users and IDs from the backend) -->
+        <div class="user-list-item" data-user-id="u1">User 1</div>
+        <div class="user-list-item" data-user-id="u2">User 2</div>
+        <div class="user-list-item" data-user-id="u3">User 3</div>
+        <!-- Add more users as needed -->
+    </div>
+    <div id="uploadContainer" style="display: none;">
+        <input type="file" id="fileInput" style="display:none;" onchange="uploadFile()" />
+        <label for="fileInput" id="uploadButton" class="custom-file-upload">Upload File</label>
+    </div>
+    <h2 style="display: none;">File List:</h2>
+    <ul id="fileList" style="display: none;"></ul>
+
+    <script>
+
+        const userList = document.getElementById('userList');
+        const userListItems = userList.getElementsByClassName('user-list-item');
+
+        for (const listItem of userListItems) {
+            listItem.addEventListener('click', () => {
+                const userId = listItem.getAttribute('data-user-id');
+                activateUser(userId);
+            });
+        }
+
+        // Function to activate the selected user
+        function activateUser(userId) {
+    // Remove 'active' class from all user list items
+            for (const listItem of userListItems) {
+                listItem.classList.remove('active');
+            }
+
+            // Add 'active' class to the clicked user list item
+            const clickedUser = document.querySelector(`[data-user-id="${userId}"]`);
+            clickedUser.classList.add('active');
+
+            // Hide all file-related elements first
+            const uploadContainer = document.getElementById('uploadContainer');
+            const fileListHeading = document.querySelector('h2');
+            const fileList = document.getElementById('fileList');
+
+            uploadContainer.style.display = 'none';
+            fileListHeading.style.display = 'none';
+            fileList.style.display = 'none';
+
+            // Show the elements for the selected user
+            uploadContainer.style.display = 'block';
+            fileListHeading.style.display = 'block';
+            fileList.style.display = 'block';
+
+            // Call listFiles with the selected user ID
+            listFiles(userId);
+        }
+
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('timestamp', new Date().toLocaleString());
+
+            // Check if a file is selected
+            if (file) {
+                // Perform the file upload
+                const activeUserId = getActiveUserId();
+                console.log(activeUserId)
+                fetch(`http://localhost:8080/uploadFile/${activeUserId}/`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(message => {
+                    alert("file " + file.name + " uploaded successfully");
+                    // Clear the selected file and reset the input
+                    fileInput.value = null;
+                    listFiles(activeUserId);
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert('Please choose a file to upload.');
+            }
+
+
+        }
+
+        
+        function getActiveUserId() {
+            const userListItems = document.getElementsByClassName('user-list-item');
+            for (const listItem of userListItems) {
+
+                if (listItem.classList.contains('active')) {
+                    return listItem.getAttribute('data-user-id');
+                }
+            }
+            return null; // Return null if no active user found
+        }
+
+        function listFiles(userId) {
+            fetch(`http://localhost:8080/listFiles/${userId}`)
+            .then(response => response.json())
+            .then(files => {
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = '';
+
+                files.forEach(file => {
+                    const listItem = document.createElement('li');
+                    // listItem.textContent = `${file.name} (Created at: ${file.createdTime})`;
+                    listItem.textContent = `${file}`;
+                    fileList.appendChild(listItem);
+                    const downloadButton = document.createElement('button');
+                    downloadButton.textContent = 'Download';
+                    downloadButton.className = 'download-button';
+                    downloadButton.onclick = () => downloadFile(userId, file);
+                    listItem.appendChild(downloadButton);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+
+        }
+
+
+        // New function to handle file download
+        function downloadFile(userId, filename) {
+            fetch(`http://localhost:8080/downloadFile/${userId}/${filename}`, {
+                method: 'GET'
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a temporary anchor element to trigger the download
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Initial listFiles call to populate the list on page load
+        listFiles(getActiveUserId());
+    </script>
+</body>
+</html>
