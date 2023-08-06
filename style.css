@@ -6,6 +6,8 @@ body {
 h1 {
     text-align: center;
     margin-bottom: 20px;
+    font-size: 40px;
+
 }
 
 #uploadContainer {
@@ -84,7 +86,7 @@ li {
 }
 
 select {
-    font-size: 20px; /* Make the font size bigger */
+    font-size: 30px; /* Make the font size bigger */
     padding: 10px; /* Add some padding to make it visually larger */
     border: 2px solid #333; /* Add a border to the select */
     border-radius: 8px; /* Add some border radius for rounded corners */
@@ -93,7 +95,7 @@ select {
     color: #333; /* Set the text color */
     cursor: pointer; /* Change cursor on hover */
     /* Optional: Add transitions for smooth effects */
-    margin-left: 45%;
+    margin-left: 42.5%;
     transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
